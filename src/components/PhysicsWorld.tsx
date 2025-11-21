@@ -9,7 +9,7 @@ interface PhysicsWorldProps {
 
 export function PhysicsWorld({ children }: PhysicsWorldProps) {
   return (
-    <Physics gravity={[0, -9.81, 0]} debug={false}>
+    <Physics gravity={[0, 0, 0]} debug={false}>
       {children}
     </Physics>
   );

@@ -72,7 +72,7 @@ export async function deleteUnicorn(unicornId: string): Promise<void> {
 export async function getUserUnicornCount(userId: string): Promise<number> {
   const supabase = createClient();
 
-  const { data, error } = await supabase
+  const { count, error } = await supabase
     .from("unicorns")
     .select("id", { count: "exact", head: true })
     .eq("user_id", userId);
@@ -81,5 +81,5 @@ export async function getUserUnicornCount(userId: string): Promise<number> {
     throw new Error(`Failed to count unicorns: ${error.message}`);
   }
 
-  return data?.length || 0;
+  return count || 0;
 }
