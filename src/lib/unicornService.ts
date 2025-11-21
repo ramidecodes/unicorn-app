@@ -18,7 +18,7 @@ export interface CreateUnicornParams {
 }
 
 export async function createUnicorn(
-  params: CreateUnicornParams
+  params: CreateUnicornParams,
 ): Promise<Unicorn> {
   const supabase = createClient();
 

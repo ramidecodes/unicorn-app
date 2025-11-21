@@ -67,17 +67,20 @@ export function Unicorn({ features, position = [0, 0, 0] }: UnicornProps) {
       {/* Mane - styled based on hairStyle */}
       {features.hairStyle === "curly" && (
         <group ref={maneRef}>
-          {[...Array(5)].map((_, i) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: Static array, order never changes
-            <mesh
-              key={`curly-${i}`}
-              position={[0.3 + i * 0.1, 0.3 + Math.sin(i) * 0.2, 0]}
-              rotation={[0, 0, Math.sin(i) * 0.3]}
-            >
-              <sphereGeometry args={[0.15, 16, 16]} />
-              <meshStandardMaterial color={maneColor} />
-            </mesh>
-          ))}
+          {[...Array(5)].map((_, i) => {
+            const x = 0.3 + i * 0.1;
+            const y = 0.3 + Math.sin(i) * 0.2;
+            return (
+              <mesh
+                key={`curly-${x}-${y}`}
+                position={[x, y, 0]}
+                rotation={[0, 0, Math.sin(i) * 0.3]}
+              >
+                <sphereGeometry args={[0.15, 16, 16]} />
+                <meshStandardMaterial color={maneColor} />
+              </mesh>
+            );
+          })}
         </group>
       )}
       {features.hairStyle === "straight" && (
@@ -88,47 +91,55 @@ export function Unicorn({ features, position = [0, 0, 0] }: UnicornProps) {
       )}
       {features.hairStyle === "wavy" && (
         <group ref={maneRef}>
-          {[...Array(4)].map((_, i) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: Static array, order never changes
-            <mesh
-              key={`wavy-${i}`}
-              position={[0.2 + i * 0.1, 0.2 + Math.sin(i * 0.8) * 0.15, 0]}
-              rotation={[0, 0, Math.sin(i * 0.8) * 0.2]}
-            >
-              <boxGeometry args={[0.1, 0.3, 0.1]} />
-              <meshStandardMaterial color={maneColor} />
-            </mesh>
-          ))}
+          {[...Array(4)].map((_, i) => {
+            const x = 0.2 + i * 0.1;
+            const y = 0.2 + Math.sin(i * 0.8) * 0.15;
+            return (
+              <mesh
+                key={`wavy-${x}-${y}`}
+                position={[x, y, 0]}
+                rotation={[0, 0, Math.sin(i * 0.8) * 0.2]}
+              >
+                <boxGeometry args={[0.1, 0.3, 0.1]} />
+                <meshStandardMaterial color={maneColor} />
+              </mesh>
+            );
+          })}
         </group>
       )}
       {features.hairStyle === "spiky" && (
         <group ref={maneRef}>
-          {[...Array(6)].map((_, i) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: Static array, order never changes
-            <mesh
-              key={`spiky-${i}`}
-              position={[0.2 + i * 0.08, 0.3 + i * 0.1, 0]}
-              rotation={[0, 0, 0.3]}
-            >
-              <coneGeometry args={[0.08, 0.2, 4]} />
-              <meshStandardMaterial color={maneColor} />
-            </mesh>
-          ))}
+          {[...Array(6)].map((_, i) => {
+            const x = 0.2 + i * 0.08;
+            const y = 0.3 + i * 0.1;
+            return (
+              <mesh
+                key={`spiky-${x}-${y}`}
+                position={[x, y, 0]}
+                rotation={[0, 0, 0.3]}
+              >
+                <coneGeometry args={[0.08, 0.2, 4]} />
+                <meshStandardMaterial color={maneColor} />
+              </mesh>
+            );
+          })}
         </group>
       )}
       {features.hairStyle === "braided" && (
         <group ref={maneRef}>
-          {[...Array(3)].map((_, i) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: Static array, order never changes
-            <mesh
-              key={`braided-${i}`}
-              position={[0.2, 0.2 + i * 0.15, 0]}
-              rotation={[0, 0, Math.sin(i) * 0.1]}
-            >
-              <cylinderGeometry args={[0.06, 0.06, 0.3, 8]} />
-              <meshStandardMaterial color={maneColor} />
-            </mesh>
-          ))}
+          {[...Array(3)].map((_, i) => {
+            const y = 0.2 + i * 0.15;
+            return (
+              <mesh
+                key={`braided-0.2-${y}`}
+                position={[0.2, y, 0]}
+                rotation={[0, 0, Math.sin(i) * 0.1]}
+              >
+                <cylinderGeometry args={[0.06, 0.06, 0.3, 8]} />
+                <meshStandardMaterial color={maneColor} />
+              </mesh>
+            );
+          })}
         </group>
       )}
       {features.hairStyle === "flowing" && (
@@ -150,9 +161,11 @@ export function Unicorn({ features, position = [0, 0, 0] }: UnicornProps) {
         [-0.3, -0.8, 0.3],
         [0.3, -0.8, -0.3],
         [-0.3, -0.8, -0.3],
-      ].map((pos, i) => (
-        // biome-ignore lint/suspicious/noArrayIndexKey: Static array, order never changes
-        <mesh key={`leg-${i}`} position={pos as [number, number, number]}>
+      ].map((pos) => (
+        <mesh
+          key={`leg-${pos[0]}-${pos[1]}-${pos[2]}`}
+          position={pos as [number, number, number]}
+        >
           <cylinderGeometry args={[0.1, 0.1, 0.6, 8]} />
           <meshStandardMaterial color={bodyColor} />
         </mesh>
@@ -167,20 +180,16 @@ export function Unicorn({ features, position = [0, 0, 0] }: UnicornProps) {
       )}
       {features.accessories.hat === "crown" && (
         <group position={[0.6, 0.8, 0]}>
-          {[...Array(5)].map((_, i) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: Static array, order never changes
-            <mesh
-              key={`crown-${i}`}
-              position={[
-                Math.sin((i / 5) * Math.PI * 2) * 0.2,
-                0,
-                Math.cos((i / 5) * Math.PI * 2) * 0.2,
-              ]}
-            >
-              <boxGeometry args={[0.05, 0.2, 0.05]} />
-              <meshStandardMaterial color="#FFD700" />
-            </mesh>
-          ))}
+          {[...Array(5)].map((_, i) => {
+            const x = Math.sin((i / 5) * Math.PI * 2) * 0.2;
+            const z = Math.cos((i / 5) * Math.PI * 2) * 0.2;
+            return (
+              <mesh key={`crown-${x}-0-${z}`} position={[x, 0, z]}>
+                <boxGeometry args={[0.05, 0.2, 0.05]} />
+                <meshStandardMaterial color="#FFD700" />
+              </mesh>
+            );
+          })}
         </group>
       )}
       {features.accessories.glasses === "sunglasses" && (
