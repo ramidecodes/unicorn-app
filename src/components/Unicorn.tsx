@@ -2,7 +2,7 @@
 
 import { useFrame } from "@react-three/fiber";
 import { useRef } from "react";
-import type { Mesh } from "three";
+import type { Group, Mesh } from "three";
 import type { UnicornFeatures } from "@/lib/unicornFeatures";
 
 interface UnicornProps {
@@ -11,7 +11,7 @@ interface UnicornProps {
 }
 
 export function Unicorn({ features, position = [0, 0, 0] }: UnicornProps) {
-  const groupRef = useRef<THREE.Group>(null);
+  const groupRef = useRef<Group>(null);
   const bodyRef = useRef<Mesh>(null);
   const headRef = useRef<Mesh>(null);
   const hornRef = useRef<Mesh>(null);
