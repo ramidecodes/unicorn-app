@@ -1,0 +1,46 @@
+"use client";
+
+import { type RapierRigidBody, RigidBody } from "@react-three/rapier";
+import { useEffect, useRef } from "react";
+import type { UnicornFeatures } from "@/lib/unicornFeatures";
+import { Unicorn } from "./Unicorn";
+
+interface PhysicsUnicornProps {
+  features: UnicornFeatures;
+  position: [number, number, number];
+  velocity: [number, number, number];
+  id: string;
+}
+
+export function PhysicsUnicorn({
+  features,
+  position,
+  velocity,
+}: PhysicsUnicornProps) {
+  const rigidBodyRef = useRef<RapierRigidBody>(null);
+
+  useEffect(() => {
+    if (rigidBodyRef.current) {
+      // Set initial velocity
+      rigidBodyRef.current.setLinvel(
+        { x: velocity[0], y: velocity[1], z: velocity[2] },
+        true,
+      );
+    }
+  }, [velocity]);
+
+  return (
+    <RigidBody
+      ref={rigidBodyRef}
+      position={position}
+      type="dynamic"
+      colliders="ball"
+      restitution={1.0} // Full bounce
+      friction={0}
+      linearDamping={0} // No damping for continuous bouncing
+      angularDamping={0}
+    >
+      <Unicorn features={features} position={[0, 0, 0]} />
+    </RigidBody>
+  );
+}
