@@ -1,126 +1,29 @@
-"use client";
-
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { UnicornScene } from "@/components/UnicornScene";
-import { useAuth } from "@/contexts/AuthContext";
-import { generateRandomFeatures } from "@/lib/unicornFeatures";
-import {
-  createUnicorn,
-  getUserUnicorns,
-  type Unicorn,
-} from "@/lib/unicornService";
 
 export default function HomePage() {
-  const { user, loading: authLoading } = useAuth();
-  const [unicorns, setUnicorns] = useState<Unicorn[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [creating, setCreating] = useState(false);
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/login");
-      return;
-    }
-
-    if (user) {
-      const loadUnicorns = async () => {
-        try {
-          setLoading(true);
-          const userUnicorns = await getUserUnicorns(user.id);
-          setUnicorns(userUnicorns);
-        } catch (error) {
-          console.error("Failed to load unicorns:", error);
-        } finally {
-          setLoading(false);
-        }
-      };
-      loadUnicorns();
-    }
-  }, [user, authLoading, router]);
-
-  const handleCreateUnicorn = async () => {
-    if (!user || creating) return;
-
-    try {
-      setCreating(true);
-      const features = generateRandomFeatures();
-
-      // Random spawn position
-      const position = {
-        x: (Math.random() - 0.5) * 8,
-        y: (Math.random() - 0.5) * 8,
-        z: (Math.random() - 0.5) * 8,
-      };
-
-      // Random velocity for bouncing
-      const velocity = {
-        x: (Math.random() - 0.5) * 5,
-        y: (Math.random() - 0.5) * 5,
-        z: (Math.random() - 0.5) * 5,
-      };
-
-      const newUnicorn = await createUnicorn({
-        userId: user.id,
-        features,
-        position,
-        velocity,
-      });
-
-      setUnicorns((prev) => [newUnicorn, ...prev]);
-    } catch (error) {
-      console.error("Failed to create unicorn:", error);
-      alert("Failed to create unicorn. Please try again.");
-    } finally {
-      setCreating(false);
-    }
-  };
-
-  if (authLoading || loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-200">
-        <div className="text-lg text-gray-700">Loading...</div>
-      </div>
-    );
-  }
-
   return (
-    <div className="relative min-h-screen bg-gray-200">
-      {/* Navigation */}
-      <nav className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between p-4">
-        <h1 className="text-xl font-bold text-gray-800">Unicorn App</h1>
-        <div className="flex gap-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100">
+      <div className="mx-auto max-w-2xl text-center">
+        <h1 className="mb-6 text-6xl font-bold text-gray-900">
+          🦄 Unicorn App
+        </h1>
+        <p className="mb-8 text-xl text-gray-700">
+          Create and watch your magical unicorns bounce around in 3D!
+        </p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
           <Link
-            href="/profile"
-            className="rounded bg-gray-700 px-4 py-2 text-sm font-medium text-white hover:bg-gray-600"
+            href="/login"
+            className="rounded-lg bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
           >
-            Profile
+            Login
+          </Link>
+          <Link
+            href="/signup"
+            className="rounded-lg bg-white px-8 py-4 text-lg font-semibold text-gray-800 shadow-lg transition-all hover:scale-105 hover:shadow-xl"
+          >
+            Sign Up
           </Link>
         </div>
-      </nav>
-
-      {/* 3D Scene */}
-      <div className="absolute inset-0">
-        <UnicornScene unicorns={unicorns} />
-      </div>
-
-      {/* Create Unicorn Button */}
-      <div className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2">
-        <button
-          type="button"
-          onClick={handleCreateUnicorn}
-          disabled={creating}
-          className="rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 px-8 py-4 text-lg font-bold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {creating ? "Creating Unicorn..." : "Create Unicorn"}
-        </button>
-      </div>
-
-      {/* Unicorn Count Display */}
-      <div className="absolute top-20 left-4 z-10 rounded bg-white/80 px-4 py-2 text-sm font-medium text-gray-800 shadow">
-        Unicorns: {unicorns.length}
       </div>
     </div>
   );
