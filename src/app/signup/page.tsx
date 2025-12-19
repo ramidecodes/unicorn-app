@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useSignUp } from "@clerk/nextjs";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -12,10 +12,12 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const supabase = createClient();
+  const { isLoaded, signUp, setActive } = useSignUp();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isLoaded) return;
+
     setError(null);
 
     if (password !== confirmPassword) {
@@ -23,24 +25,27 @@ export default function SignupPage() {
       return;
     }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters");
       return;
     }
 
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
+      const result = await signUp.create({
+        emailAddress: email,
         password,
       });
 
-      if (error) throw error;
-
-      router.push("/");
-      router.refresh();
-    } catch (err) {
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        router.push("/");
+        router.refresh();
+      } else {
+        setError("Sign up incomplete. Please try again.");
+      }
+    } catch (err: unknown) {
       const errorMessage =
         err instanceof Error ? err.message : "An error occurred";
       setError(errorMessage);

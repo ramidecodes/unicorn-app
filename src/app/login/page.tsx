@@ -1,9 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useSignIn } from "@clerk/nextjs";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -11,24 +11,29 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const supabase = createClient();
+  const { isLoaded, signIn, setActive } = useSignIn();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isLoaded) return;
+
     setError(null);
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
+      const result = await signIn.create({
+        identifier: email,
         password,
       });
 
-      if (error) throw error;
-
-      router.push("/");
-      router.refresh();
-    } catch (err) {
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        router.push("/");
+        router.refresh();
+      } else {
+        setError("Sign in incomplete. Please try again.");
+      }
+    } catch (err: unknown) {
       const errorMessage =
         err instanceof Error ? err.message : "An error occurred";
       setError(errorMessage);

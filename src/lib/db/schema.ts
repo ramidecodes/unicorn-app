@@ -1,10 +1,10 @@
-import { index, jsonb, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
+import { index, jsonb, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const unicorns = pgTable(
   "unicorns",
   {
     id: uuid("id").defaultRandom().primaryKey(),
-    userId: uuid("user_id").notNull(),
+    userId: varchar("user_id", { length: 255 }).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),

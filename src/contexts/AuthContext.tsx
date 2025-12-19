@@ -1,59 +1,39 @@
 "use client";
 
-import type { User } from "@supabase/supabase-js";
-import { createContext, useContext, useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useUser, useAuth as useClerkAuth } from "@clerk/nextjs";
 
+// Wrapper interface to maintain backward compatibility
 interface AuthContextType {
-  user: User | null;
+  user: {
+    id: string;
+    email: string | null | undefined;
+    created_at?: string;
+  } | null;
   loading: boolean;
   signOut: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType>({
-  user: null,
-  loading: true,
-  signOut: async () => {},
-});
-
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const supabase = createClient();
-
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [supabase]);
+// Create a wrapper hook that provides the same interface as before
+export const useAuth = (): AuthContextType => {
+  const { user, isLoaded } = useUser();
+  const { signOut: clerkSignOut } = useClerkAuth();
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await clerkSignOut();
   };
 
-  return (
-    <AuthContext.Provider value={{ user, loading, signOut }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
+  // Transform Clerk user to match expected interface
+  const transformedUser = user
+    ? {
+        id: user.id,
+        email: user.primaryEmailAddress?.emailAddress ?? null,
+        created_at: user.createdAt?.toISOString(),
+      }
+    : null;
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+  return {
+    user: transformedUser,
+    loading: !isLoaded,
+    signOut,
+  };
 };

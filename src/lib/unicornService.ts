@@ -1,4 +1,7 @@
-import { createClient } from "./supabase/client";
+"use server";
+
+import { auth } from "@clerk/nextjs/server";
+import { createClient } from "./supabase/server";
 import type { UnicornFeatures } from "./unicornFeatures";
 
 export interface Unicorn {
@@ -17,10 +20,25 @@ export interface CreateUnicornParams {
   velocity: { x: number; y: number; z: number };
 }
 
+/**
+ * Server-side function to create a unicorn with authorization check
+ * Authorization: Ensures the authenticated user matches the userId parameter
+ */
 export async function createUnicorn(
   params: CreateUnicornParams,
 ): Promise<Unicorn> {
-  const supabase = createClient();
+  // Server-side authorization check
+  const { userId: authenticatedUserId } = await auth();
+
+  if (!authenticatedUserId) {
+    throw new Error("Unauthorized: User must be authenticated");
+  }
+
+  if (authenticatedUserId !== params.userId) {
+    throw new Error("Unauthorized: Cannot create unicorn for another user");
+  }
+
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("unicorns")
@@ -40,8 +58,23 @@ export async function createUnicorn(
   return data as Unicorn;
 }
 
+/**
+ * Server-side function to get user's unicorns with authorization check
+ * Authorization: Ensures the authenticated user matches the userId parameter
+ */
 export async function getUserUnicorns(userId: string): Promise<Unicorn[]> {
-  const supabase = createClient();
+  // Server-side authorization check
+  const { userId: authenticatedUserId } = await auth();
+
+  if (!authenticatedUserId) {
+    throw new Error("Unauthorized: User must be authenticated");
+  }
+
+  if (authenticatedUserId !== userId) {
+    throw new Error("Unauthorized: Cannot fetch unicorns for another user");
+  }
+
+  const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("unicorns")
@@ -56,8 +89,34 @@ export async function getUserUnicorns(userId: string): Promise<Unicorn[]> {
   return (data || []) as Unicorn[];
 }
 
+/**
+ * Server-side function to delete a unicorn with authorization check
+ * Authorization: Ensures the authenticated user owns the unicorn
+ */
 export async function deleteUnicorn(unicornId: string): Promise<void> {
-  const supabase = createClient();
+  // Server-side authorization check
+  const { userId: authenticatedUserId } = await auth();
+
+  if (!authenticatedUserId) {
+    throw new Error("Unauthorized: User must be authenticated");
+  }
+
+  const supabase = await createClient();
+
+  // First, verify the unicorn belongs to the authenticated user
+  const { data: unicorn, error: fetchError } = await supabase
+    .from("unicorns")
+    .select("user_id")
+    .eq("id", unicornId)
+    .single();
+
+  if (fetchError || !unicorn) {
+    throw new Error(`Unicorn not found: ${fetchError?.message || "Unknown error"}`);
+  }
+
+  if (unicorn.user_id !== authenticatedUserId) {
+    throw new Error("Unauthorized: Cannot delete another user's unicorn");
+  }
 
   const { error } = await supabase
     .from("unicorns")
@@ -69,8 +128,23 @@ export async function deleteUnicorn(unicornId: string): Promise<void> {
   }
 }
 
+/**
+ * Server-side function to get user's unicorn count with authorization check
+ * Authorization: Ensures the authenticated user matches the userId parameter
+ */
 export async function getUserUnicornCount(userId: string): Promise<number> {
-  const supabase = createClient();
+  // Server-side authorization check
+  const { userId: authenticatedUserId } = await auth();
+
+  if (!authenticatedUserId) {
+    throw new Error("Unauthorized: User must be authenticated");
+  }
+
+  if (authenticatedUserId !== userId) {
+    throw new Error("Unauthorized: Cannot count unicorns for another user");
+  }
+
+  const supabase = await createClient();
 
   const { count, error } = await supabase
     .from("unicorns")
