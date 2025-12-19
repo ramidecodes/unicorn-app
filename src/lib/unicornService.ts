@@ -1,7 +1,8 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { createClient } from "./supabase/server";
+import { and, count, desc, eq } from "drizzle-orm";
+import { db, unicorns } from "./db";
 import type { UnicornFeatures } from "./unicornFeatures";
 
 export interface Unicorn {
@@ -11,6 +12,27 @@ export interface Unicorn {
   features: UnicornFeatures;
   position: { x: number; y: number; z: number };
   velocity: { x: number; y: number; z: number };
+}
+
+// Helper function to convert Drizzle row to Unicorn interface
+// Drizzle returns camelCase properties (userId, createdAt) matching the schema
+// JSONB fields are typed as unknown, so we need to assert their types
+function rowToUnicorn(row: {
+  id: string;
+  userId: string;
+  createdAt: Date;
+  features: unknown;
+  position: unknown;
+  velocity: unknown;
+}): Unicorn {
+  return {
+    id: row.id,
+    user_id: row.userId, // Map from camelCase to snake_case for interface
+    created_at: row.createdAt.toISOString(),
+    features: row.features as UnicornFeatures,
+    position: row.position as { x: number; y: number; z: number },
+    velocity: row.velocity as { x: number; y: number; z: number },
+  };
 }
 
 export interface CreateUnicornParams {
@@ -38,24 +60,23 @@ export async function createUnicorn(
     throw new Error("Unauthorized: Cannot create unicorn for another user");
   }
 
-  const supabase = await createClient();
+  try {
+    const [unicorn] = await db
+      .insert(unicorns)
+      .values({
+        userId: params.userId,
+        features: params.features,
+        position: params.position,
+        velocity: params.velocity,
+      })
+      .returning();
 
-  const { data, error } = await supabase
-    .from("unicorns")
-    .insert({
-      user_id: params.userId,
-      features: params.features,
-      position: params.position,
-      velocity: params.velocity,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    throw new Error(`Failed to create unicorn: ${error.message}`);
+    return rowToUnicorn(unicorn);
+  } catch (error) {
+    throw new Error(
+      `Failed to create unicorn: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
   }
-
-  return data as Unicorn;
 }
 
 /**
@@ -74,19 +95,19 @@ export async function getUserUnicorns(userId: string): Promise<Unicorn[]> {
     throw new Error("Unauthorized: Cannot fetch unicorns for another user");
   }
 
-  const supabase = await createClient();
+  try {
+    const rows = await db
+      .select()
+      .from(unicorns)
+      .where(eq(unicorns.userId, userId))
+      .orderBy(desc(unicorns.createdAt));
 
-  const { data, error } = await supabase
-    .from("unicorns")
-    .select("*")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    throw new Error(`Failed to fetch unicorns: ${error.message}`);
+    return rows.map(rowToUnicorn);
+  } catch (error) {
+    throw new Error(
+      `Failed to fetch unicorns: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
   }
-
-  return (data || []) as Unicorn[];
 }
 
 /**
@@ -101,30 +122,34 @@ export async function deleteUnicorn(unicornId: string): Promise<void> {
     throw new Error("Unauthorized: User must be authenticated");
   }
 
-  const supabase = await createClient();
+  try {
+    // Delete with authorization check - only delete if unicorn belongs to authenticated user
+    const result = await db
+      .delete(unicorns)
+      .where(and(eq(unicorns.id, unicornId), eq(unicorns.userId, authenticatedUserId)))
+      .returning();
 
-  // First, verify the unicorn belongs to the authenticated user
-  const { data: unicorn, error: fetchError } = await supabase
-    .from("unicorns")
-    .select("user_id")
-    .eq("id", unicornId)
-    .single();
+    if (result.length === 0) {
+      // Either unicorn doesn't exist or doesn't belong to user
+      // Check if unicorn exists at all
+      const [unicorn] = await db
+        .select({ userId: unicorns.userId })
+        .from(unicorns)
+        .where(eq(unicorns.id, unicornId))
+        .limit(1);
 
-  if (fetchError || !unicorn) {
-    throw new Error(`Unicorn not found: ${fetchError?.message || "Unknown error"}`);
-  }
-
-  if (unicorn.user_id !== authenticatedUserId) {
-    throw new Error("Unauthorized: Cannot delete another user's unicorn");
-  }
-
-  const { error } = await supabase
-    .from("unicorns")
-    .delete()
-    .eq("id", unicornId);
-
-  if (error) {
-    throw new Error(`Failed to delete unicorn: ${error.message}`);
+      if (!unicorn) {
+        throw new Error("Unicorn not found");
+      }
+      throw new Error("Unauthorized: Cannot delete another user's unicorn");
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error(
+      `Failed to delete unicorn: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
   }
 }
 
@@ -144,16 +169,16 @@ export async function getUserUnicornCount(userId: string): Promise<number> {
     throw new Error("Unauthorized: Cannot count unicorns for another user");
   }
 
-  const supabase = await createClient();
+  try {
+    const [{ count: unicornCount }] = await db
+      .select({ count: count() })
+      .from(unicorns)
+      .where(eq(unicorns.userId, userId));
 
-  const { count, error } = await supabase
-    .from("unicorns")
-    .select("id", { count: "exact", head: true })
-    .eq("user_id", userId);
-
-  if (error) {
-    throw new Error(`Failed to count unicorns: ${error.message}`);
+    return unicornCount;
+  } catch (error) {
+    throw new Error(
+      `Failed to count unicorns: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
   }
-
-  return count || 0;
 }
