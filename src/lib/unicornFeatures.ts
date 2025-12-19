@@ -25,6 +25,7 @@ const BODY_COLORS = [
   "#AA96DA", // Lavender
 ];
 
+// Main colors
 const MANE_COLORS = [
   "#FF1493", // Deep pink
   "#8A2BE2", // Blue violet
