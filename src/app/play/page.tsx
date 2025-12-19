@@ -98,6 +98,12 @@ function PlayPageContent() {
           >
             Profile
           </Link>
+          <Link
+            href="/about"
+            className="rounded bg-gray-700 px-4 py-2 text-sm font-medium text-white hover:bg-gray-600"
+          >
+            About
+          </Link>
         </div>
       </nav>
 

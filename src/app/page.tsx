@@ -10,6 +10,14 @@ export default function HomePage() {
         <p className="mb-8 text-xl text-gray-700">
           Create and watch your magical unicorns bounce around in 3D!
         </p>
+        <div className="mb-4 flex justify-center">
+          <Link
+            href="/about"
+            className="text-gray-600 underline hover:text-gray-900"
+          >
+            Learn More
+          </Link>
+        </div>
         <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
           <Link
             href="/login"

@@ -21,10 +21,10 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   // If user is not authenticated and trying to access protected routes, redirect to login
-  // Homepage "/" and login/signup are public routes, so allow access
+  // Homepage "/", about "/about", and login/signup are public routes, so allow access
   const isLoginOrSignup =
     pathname.startsWith("/login") || pathname.startsWith("/signup");
-  const isPublicRoute = pathname === "/";
+  const isPublicRoute = pathname === "/" || pathname === "/about";
   if (!isLoginOrSignup && !isPublicRoute && !userId) {
     const url = req.nextUrl.clone();
     url.pathname = "/login";
