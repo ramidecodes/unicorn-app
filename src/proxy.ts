@@ -5,8 +5,8 @@ export default clerkMiddleware(async (auth, req) => {
   const { userId } = await auth();
   const pathname = req.nextUrl.pathname;
 
-  // Protect /play route - requires authentication
-  if (pathname.startsWith("/play")) {
+  // Protect /play and /profile routes - requires authentication
+  if (pathname.startsWith("/play") || pathname.startsWith("/profile")) {
     await auth.protect();
   }
 

@@ -3,22 +3,20 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
 import { useAuth } from "@/contexts/AuthContext";
 import { getUserUnicornCount } from "@/lib/unicornService";
 
-export default function ProfilePage() {
-  const { user, loading: authLoading, signOut } = useAuth();
+function ProfilePageContent() {
+  const { user, signOut } = useAuth();
   const [unicornCount, setUnicornCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/login");
-      return;
-    }
-
-    if (user) {
+    // Load stats when user is authenticated
+    // Use user?.id as dependency to prevent re-runs when user object reference changes
+    if (user?.id) {
       const loadStats = async () => {
         try {
           setLoading(true);
@@ -31,15 +29,18 @@ export default function ProfilePage() {
         }
       };
       loadStats();
+    } else {
+      // If no user, set loading to false to prevent infinite loading
+      setLoading(false);
     }
-  }, [user, authLoading, router]);
+  }, [user?.id]);
 
   const handleLogout = async () => {
     await signOut();
     router.push("/login");
   };
 
-  if (authLoading || loading) {
+  if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-100">
         <div className="text-lg text-gray-700">Loading...</div>
@@ -60,12 +61,12 @@ export default function ProfilePage() {
       <nav className="bg-white shadow">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
-            <Link href="/" className="text-xl font-bold text-gray-800">
+            <Link href="/play" className="text-xl font-bold text-gray-800">
               Unicorn App
             </Link>
             <div className="flex gap-4">
               <Link
-                href="/"
+                href="/play"
                 className="rounded bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-300"
               >
                 Home
@@ -132,5 +133,18 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <>
+      <SignedIn>
+        <ProfilePageContent />
+      </SignedIn>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
+    </>
   );
 }
