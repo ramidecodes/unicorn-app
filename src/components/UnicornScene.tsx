@@ -4,16 +4,19 @@ import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
 import type { Unicorn } from "@/lib/unicornService";
+import type { Llama } from "@/lib/llamaService";
 import { Bounds } from "./Bounds";
 import { ParticleRainbow } from "./ParticleRainbow";
 import { PhysicsUnicorn } from "./PhysicsUnicorn";
+import { PhysicsLlama } from "./PhysicsLlama";
 import { PhysicsWorld } from "./PhysicsWorld";
 
 interface UnicornSceneProps {
   unicorns: Unicorn[];
+  llamas: Llama[];
 }
 
-export function UnicornScene({ unicorns }: UnicornSceneProps) {
+export function UnicornScene({ unicorns, llamas }: UnicornSceneProps) {
   return (
     <Canvas className="absolute inset-0">
       <Suspense fallback={null}>
@@ -40,6 +43,23 @@ export function UnicornScene({ unicorns }: UnicornSceneProps) {
                 unicorn.velocity.x,
                 unicorn.velocity.y,
                 unicorn.velocity.z,
+              ]}
+            />
+          ))}
+          {llamas.map((llama) => (
+            <PhysicsLlama
+              key={llama.id}
+              id={llama.id}
+              features={llama.features}
+              position={[
+                llama.position.x,
+                llama.position.y,
+                llama.position.z,
+              ]}
+              velocity={[
+                llama.velocity.x,
+                llama.velocity.y,
+                llama.velocity.z,
               ]}
             />
           ))}

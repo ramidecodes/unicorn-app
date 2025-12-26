@@ -8,6 +8,13 @@
       "when": 1766120319162,
       "tag": "0000_simple_leader",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1766736919178,
+      "tag": "0001_faithful_black_cat",
+      "breakpoints": true
     }
   ]
 }

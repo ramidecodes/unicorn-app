@@ -11,29 +11,41 @@ import {
   getUserUnicorns,
   type Unicorn,
 } from "@/lib/unicornService";
+import { generateRandomFeatures as generateRandomLlamaFeatures } from "@/lib/llamaFeatures";
+import {
+  createLlama,
+  getUserLlamas,
+  type Llama,
+} from "@/lib/llamaService";
 
 function PlayPageContent() {
   const { user } = useAuth();
   const [unicorns, setUnicorns] = useState<Unicorn[]>([]);
+  const [llamas, setLlamas] = useState<Llama[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [creatingLlama, setCreatingLlama] = useState(false);
 
   useEffect(() => {
-    // Load unicorns when user is authenticated
+    // Load unicorns and llamas when user is authenticated
     // Use user?.id as dependency to prevent re-runs when user object reference changes
     if (user?.id) {
-      const loadUnicorns = async () => {
+      const loadCreatures = async () => {
         try {
           setLoading(true);
-          const userUnicorns = await getUserUnicorns(user.id);
+          const [userUnicorns, userLlamas] = await Promise.all([
+            getUserUnicorns(user.id),
+            getUserLlamas(user.id),
+          ]);
           setUnicorns(userUnicorns);
+          setLlamas(userLlamas);
         } catch (error) {
-          console.error("Failed to load unicorns:", error);
+          console.error("Failed to load creatures:", error);
         } finally {
           setLoading(false);
         }
       };
-      loadUnicorns();
+      loadCreatures();
     } else {
       // If no user, set loading to false to prevent infinite loading
       setLoading(false);
@@ -77,11 +89,48 @@ function PlayPageContent() {
     }
   };
 
-  // Show loading while fetching unicorns
+  const handleCreateLlama = async () => {
+    if (!user || creatingLlama) return;
+
+    try {
+      setCreatingLlama(true);
+      const features = generateRandomLlamaFeatures();
+
+      // Random spawn position
+      const position = {
+        x: (Math.random() - 0.5) * 8,
+        y: (Math.random() - 0.5) * 8,
+        z: (Math.random() - 0.5) * 8,
+      };
+
+      // Random velocity for bouncing
+      const velocity = {
+        x: (Math.random() - 0.5) * 5,
+        y: (Math.random() - 0.5) * 5,
+        z: (Math.random() - 0.5) * 5,
+      };
+
+      const newLlama = await createLlama({
+        userId: user.id,
+        features,
+        position,
+        velocity,
+      });
+
+      setLlamas((prev) => [newLlama, ...prev]);
+    } catch (error) {
+      console.error("Failed to create llama:", error);
+      alert("Failed to create llama. Please try again.");
+    } finally {
+      setCreatingLlama(false);
+    }
+  };
+
+  // Show loading while fetching creatures
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-200">
-        <div className="text-lg text-gray-700">Loading unicorns...</div>
+        <div className="text-lg text-gray-700">Loading creatures...</div>
       </div>
     );
   }
@@ -109,11 +158,11 @@ function PlayPageContent() {
 
       {/* 3D Scene */}
       <div className="absolute inset-0">
-        <UnicornScene unicorns={unicorns} />
+        <UnicornScene unicorns={unicorns} llamas={llamas} />
       </div>
 
-      {/* Create Unicorn Button */}
-      <div className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2">
+      {/* Create Buttons */}
+      <div className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col gap-4 sm:flex-row">
         <button
           type="button"
           onClick={handleCreateUnicorn}
@@ -122,11 +171,19 @@ function PlayPageContent() {
         >
           {creating ? "Creating Unicorn..." : "Create Unicorn"}
         </button>
+        <button
+          type="button"
+          onClick={handleCreateLlama}
+          disabled={creatingLlama}
+          className="rounded-full bg-gradient-to-r from-amber-500 via-orange-500 to-brown-500 px-8 py-4 text-lg font-bold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {creatingLlama ? "Creating Llama..." : "Create Llama"}
+        </button>
       </div>
 
-      {/* Unicorn Count Display */}
+      {/* Count Display */}
       <div className="absolute top-20 left-4 z-10 rounded bg-white/80 px-4 py-2 text-sm font-medium text-gray-800 shadow">
-        Unicorns: {unicorns.length}
+        Unicorns: {unicorns.length} | Llamas: {llamas.length}
       </div>
     </div>
   );
