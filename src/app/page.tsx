@@ -1,8 +1,9 @@
 import Link from "next/link";
+// comment
 
 export default function HomePage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-purple-600">
       <div className="mx-auto max-w-2xl text-center">
         <h1 className="mb-6 text-6xl font-bold text-gray-900">
           🦄 Unicorn App
