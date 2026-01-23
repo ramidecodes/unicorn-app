@@ -22,7 +22,7 @@ export default function HomePage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
           <Link
             href="/login"
-            className="rounded-lg bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
+            className="rounded-lg bg-linear-to-r from-pink-500 via-purple-500 to-blue-500 px-8 py-4 text-lg font-semibold text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
           >
             Login
           </Link>

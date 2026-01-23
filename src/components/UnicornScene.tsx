@@ -10,6 +10,7 @@ import { ParticleRainbow } from "./ParticleRainbow";
 import { PhysicsUnicorn } from "./PhysicsUnicorn";
 import { PhysicsLlama } from "./PhysicsLlama";
 import { PhysicsWorld } from "./PhysicsWorld";
+import { ShinyText } from "./ShinyText";
 
 interface UnicornSceneProps {
   unicorns: Unicorn[];
@@ -22,10 +23,21 @@ export function UnicornScene({ unicorns, llamas }: UnicornSceneProps) {
       <Suspense fallback={null}>
         <PerspectiveCamera makeDefault position={[0, 0, 15]} fov={75} />
         <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 5]} intensity={1} />
-        <pointLight position={[-10, -10, -5]} intensity={0.5} />
+        <directionalLight position={[10, 10, 5]} intensity={1.2} />
+        <directionalLight position={[-10, 10, -5]} intensity={0.8} />
+        <pointLight position={[10, 10, 10]} intensity={1} />
+        <pointLight position={[-10, -10, -5]} intensity={0.6} />
+        <spotLight
+          position={[0, 10, 0]}
+          angle={0.3}
+          penumbra={0.5}
+          intensity={1.5}
+          castShadow
+        />
 
         <ParticleRainbow />
+
+        <ShinyText text="UNICORN" position={[0, 4, 0]} size={1.5} height={0.3} />
 
         <PhysicsWorld>
           <Bounds />
