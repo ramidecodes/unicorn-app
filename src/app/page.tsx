@@ -5,16 +5,16 @@ export default function HomePage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-purple-600">
       <div className="mx-auto max-w-2xl text-center">
-        <h1 className="mb-6 text-6xl font-bold text-gray-900">
+        <h1 className="mb-6 text-6xl font-bold text-white">
           🦄 Unicorn App
         </h1>
-        <p className="mb-8 text-xl text-gray-700">
+        <p className="mb-8 text-xl text-purple-100">
           Create and watch your magical unicorns bounce around in 3D!
         </p>
         <div className="mb-4 flex justify-center">
           <Link
             href="/about"
-            className="text-gray-600 underline hover:text-gray-900"
+            className="text-purple-100 underline hover:text-white"
           >
             Learn More
           </Link>

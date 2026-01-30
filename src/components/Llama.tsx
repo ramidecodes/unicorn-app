@@ -25,7 +25,8 @@ export function Llama({ features, position = [0, 0, 0] }: LlamaProps) {
         position[1] + Math.sin(state.clock.elapsedTime * 2) * 0.1;
     }
     if (neckRef.current) {
-      neckRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 1.5) * 0.05;
+      neckRef.current.rotation.z =
+        Math.sin(state.clock.elapsedTime * 1.5) * 0.05;
     }
     if (headRef.current) {
       headRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 2) * 0.03;
@@ -46,16 +47,19 @@ export function Llama({ features, position = [0, 0, 0] }: LlamaProps) {
     const g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
     // Return a darker version for contrast
-    return `rgb(${Math.max(0, r - 30)}, ${Math.max(0, g - 30)}, ${Math.max(0, b - 30)})`;
+    return `rgb(${Math.max(0, r - 30)}, ${Math.max(0, g - 30)}, ${Math.max(
+      0,
+      b - 30,
+    )})`;
   };
 
   // Helper function for deterministic "random" positions based on index
   const getDeterministicPosition = (index: number, offset: number) => {
     const seed = (index + offset) * 137.508; // Use golden angle for better distribution
     return {
-      x: (Math.sin(seed) * 1.2),
-      y: (Math.cos(seed * 0.5) * 0.8),
-      z: (Math.sin(seed * 0.7) * 0.6),
+      x: Math.sin(seed) * 1.2,
+      y: Math.cos(seed * 0.5) * 0.8,
+      z: Math.sin(seed * 0.7) * 0.6,
     };
   };
 
@@ -125,16 +129,21 @@ export function Llama({ features, position = [0, 0, 0] }: LlamaProps) {
       {features.furPattern === "gradient" && (
         <mesh position={[0, 0, 0]} scale={[1.6, 0.9, 0.7]}>
           <boxGeometry args={[1, 1, 1]} />
-          <meshStandardMaterial 
-            color={getPatternColor()} 
-            transparent 
+          <meshStandardMaterial
+            color={getPatternColor()}
+            transparent
             opacity={0.4}
           />
         </mesh>
       )}
 
       {/* Long Neck - Distinctive llama feature */}
-      <mesh ref={neckRef} position={[0.5, 0.3, 0]} rotation={[0, 0, 0.4]} scale={[0.45, 1.3, 0.45]}>
+      <mesh
+        ref={neckRef}
+        position={[0.5, 0.3, 0]}
+        rotation={[0, 0, 0.4]}
+        scale={[0.45, 1.3, 0.45]}
+      >
         <cylinderGeometry args={[0.32, 0.38, 1.0, 16]} />
         <meshStandardMaterial color={neckColor} />
       </mesh>
@@ -219,7 +228,11 @@ export function Llama({ features, position = [0, 0, 0] }: LlamaProps) {
             return (
               <mesh key={`crown-${x}-0-${z}`} position={[x, 0, z]}>
                 <boxGeometry args={[0.07, 0.28, 0.07]} />
-                <meshStandardMaterial color="#FFD700" metalness={0.8} roughness={0.2} />
+                <meshStandardMaterial
+                  color="#FFD700"
+                  metalness={0.8}
+                  roughness={0.2}
+                />
               </mesh>
             );
           })}
@@ -269,7 +282,15 @@ export function Llama({ features, position = [0, 0, 0] }: LlamaProps) {
         <mesh position={[0.5, 0.4, 0]} rotation={[Math.PI / 2, 0, 0.4]}>
           <torusGeometry args={[0.35, 0.06, 8, 16]} />
           <meshStandardMaterial
-            color={features.accessories.scarf === "striped" ? "#FF6B6B" : features.accessories.scarf === "polka-dot" ? "#FFD700" : features.accessories.scarf === "checkered" ? "#3498DB" : "#E74C3C"}
+            color={
+              features.accessories.scarf === "striped"
+                ? "#FF6B6B"
+                : features.accessories.scarf === "polka-dot"
+                ? "#FFD700"
+                : features.accessories.scarf === "checkered"
+                ? "#3498DB"
+                : "#E74C3C"
+            }
           />
         </mesh>
       )}
@@ -278,14 +299,22 @@ export function Llama({ features, position = [0, 0, 0] }: LlamaProps) {
       {features.accessories.saddle === "decorative" && (
         <mesh position={[0, 0.3, 0]} rotation={[0, 0, 0]}>
           <boxGeometry args={[0.6, 0.15, 0.5]} />
-          <meshStandardMaterial color="#8B4513" metalness={0.3} roughness={0.7} />
+          <meshStandardMaterial
+            color="#8B4513"
+            metalness={0.3}
+            roughness={0.7}
+          />
         </mesh>
       )}
       {features.accessories.saddle === "western" && (
         <group position={[0, 0.32, 0]}>
           <mesh>
             <boxGeometry args={[0.65, 0.12, 0.55]} />
-            <meshStandardMaterial color="#654321" metalness={0.4} roughness={0.6} />
+            <meshStandardMaterial
+              color="#654321"
+              metalness={0.4}
+              roughness={0.6}
+            />
           </mesh>
           {/* Saddle horn */}
           <mesh position={[0, 0.15, 0.2]}>
@@ -297,10 +326,13 @@ export function Llama({ features, position = [0, 0, 0] }: LlamaProps) {
       {features.accessories.saddle === "colorful" && (
         <mesh position={[0, 0.3, 0]} rotation={[0, 0, 0]}>
           <boxGeometry args={[0.6, 0.15, 0.5]} />
-          <meshStandardMaterial color="#FF69B4" metalness={0.2} roughness={0.8} />
+          <meshStandardMaterial
+            color="#FF69B4"
+            metalness={0.2}
+            roughness={0.8}
+          />
         </mesh>
       )}
     </group>
   );
 }
-
