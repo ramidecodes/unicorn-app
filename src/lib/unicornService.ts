@@ -13,7 +13,7 @@ export interface Unicorn {
   position: { x: number; y: number; z: number };
   velocity: { x: number; y: number; z: number };
 }
-
+// This is a comment
 // Helper function to convert Drizzle row to Unicorn interface
 // Drizzle returns camelCase properties (userId, createdAt) matching the schema
 // JSONB fields are typed as unknown, so we need to assert their types
@@ -126,7 +126,12 @@ export async function deleteUnicorn(unicornId: string): Promise<void> {
     // Delete with authorization check - only delete if unicorn belongs to authenticated user
     const result = await db
       .delete(unicorns)
-      .where(and(eq(unicorns.id, unicornId), eq(unicorns.userId, authenticatedUserId)))
+      .where(
+        and(
+          eq(unicorns.id, unicornId),
+          eq(unicorns.userId, authenticatedUserId),
+        ),
+      )
       .returning();
 
     if (result.length === 0) {
