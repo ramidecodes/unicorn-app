@@ -13,7 +13,7 @@ export interface Llama {
   position: { x: number; y: number; z: number };
   velocity: { x: number; y: number; z: number };
 }
-
+// Another comments
 // Helper function to convert Drizzle row to Llama interface
 // Drizzle returns camelCase properties (userId, createdAt) matching the schema
 // JSONB fields are typed as unknown, so we need to assert their types
@@ -46,9 +46,7 @@ export interface CreateLlamaParams {
  * Server-side function to create a llama with authorization check
  * Authorization: Ensures the authenticated user matches the userId parameter
  */
-export async function createLlama(
-  params: CreateLlamaParams,
-): Promise<Llama> {
+export async function createLlama(params: CreateLlamaParams): Promise<Llama> {
   // Server-side authorization check
   const { userId: authenticatedUserId } = await auth();
 
@@ -126,7 +124,9 @@ export async function deleteLlama(llamaId: string): Promise<void> {
     // Delete with authorization check - only delete if llama belongs to authenticated user
     const result = await db
       .delete(llamas)
-      .where(and(eq(llamas.id, llamaId), eq(llamas.userId, authenticatedUserId)))
+      .where(
+        and(eq(llamas.id, llamaId), eq(llamas.userId, authenticatedUserId)),
+      )
       .returning();
 
     if (result.length === 0) {
@@ -182,4 +182,3 @@ export async function getUserLlamaCount(userId: string): Promise<number> {
     );
   }
 }
-
