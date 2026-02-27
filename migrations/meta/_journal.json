@@ -15,6 +15,13 @@
       "when": 1766736919178,
       "tag": "0001_faithful_black_cat",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1772178218987,
+      "tag": "0002_dizzy_betty_brant",
+      "breakpoints": true
     }
   ]
 }

@@ -17,5 +17,5 @@ const client = postgres(process.env.DATABASE_URL, {
 export const db = drizzle(client, { schema });
 // another comment
 export { schema };
-export { unicorns, llamas } from "./schema";
+export { unicorns, llamas, cats } from "./schema";
 // another comment

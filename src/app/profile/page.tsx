@@ -113,7 +113,7 @@ function ProfilePageContent() {
                   Statistics
                 </h2>
                 <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div className="rounded-lg bg-gradient-to-r from-pink-500 to-purple-500 p-4">
+                  <div className="rounded-lg bg-linear-to-r from-pink-500 to-purple-500 p-4">
                     <dt className="text-sm font-medium text-white/80">
                       Total Unicorns Created
                     </dt>

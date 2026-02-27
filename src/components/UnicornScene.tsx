@@ -5,19 +5,22 @@ import { Canvas } from "@react-three/fiber";
 import { Suspense } from "react";
 import type { Unicorn } from "@/lib/unicornService";
 import type { Llama } from "@/lib/llamaService";
+import type { Cat } from "@/lib/catService";
 import { Bounds } from "./Bounds";
 import { ParticleRainbow } from "./ParticleRainbow";
 import { PhysicsUnicorn } from "./PhysicsUnicorn";
 import { PhysicsLlama } from "./PhysicsLlama";
+import { PhysicsCat } from "./PhysicsCat";
 import { PhysicsWorld } from "./PhysicsWorld";
 import { ShinyText } from "./ShinyText";
 
 interface UnicornSceneProps {
   unicorns: Unicorn[];
   llamas: Llama[];
+  cats: Cat[];
 }
 
-export function UnicornScene({ unicorns, llamas }: UnicornSceneProps) {
+export function UnicornScene({ unicorns, llamas, cats }: UnicornSceneProps) {
   return (
     <Canvas className="absolute inset-0">
       <Suspense fallback={null}>
@@ -37,7 +40,12 @@ export function UnicornScene({ unicorns, llamas }: UnicornSceneProps) {
 
         <ParticleRainbow />
 
-        <ShinyText text="UNICORN" position={[0, 4, 0]} size={1.5} height={0.3} />
+        <ShinyText
+          text="UNICORN"
+          position={[0, 4, 0]}
+          size={1.5}
+          height={0.3}
+        />
 
         <PhysicsWorld>
           <Bounds />
@@ -63,16 +71,17 @@ export function UnicornScene({ unicorns, llamas }: UnicornSceneProps) {
               key={llama.id}
               id={llama.id}
               features={llama.features}
-              position={[
-                llama.position.x,
-                llama.position.y,
-                llama.position.z,
-              ]}
-              velocity={[
-                llama.velocity.x,
-                llama.velocity.y,
-                llama.velocity.z,
-              ]}
+              position={[llama.position.x, llama.position.y, llama.position.z]}
+              velocity={[llama.velocity.x, llama.velocity.y, llama.velocity.z]}
+            />
+          ))}
+          {cats.map((cat) => (
+            <PhysicsCat
+              key={cat.id}
+              id={cat.id}
+              features={cat.features}
+              position={[cat.position.x, cat.position.y, cat.position.z]}
+              velocity={[cat.velocity.x, cat.velocity.y, cat.velocity.z]}
             />
           ))}
         </PhysicsWorld>

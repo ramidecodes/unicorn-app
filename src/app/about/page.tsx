@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100">
+    <div className="min-h-screen bg-linear-to-br from-pink-100 via-purple-100 to-blue-100">
       {/* Navigation */}
       <nav className="bg-white/80 shadow backdrop-blur-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -26,7 +26,7 @@ export default function AboutPage() {
               </Link>
               <Link
                 href="/login"
-                className="rounded bg-gradient-to-r from-pink-500 to-purple-500 px-4 py-2 text-sm font-medium text-white hover:from-pink-600 hover:to-purple-600"
+                className="rounded bg-linear-to-r from-pink-500 to-purple-500 px-4 py-2 text-sm font-medium text-white hover:from-pink-600 hover:to-purple-600"
               >
                 Login
               </Link>
@@ -54,11 +54,11 @@ export default function AboutPage() {
             </h2>
             <p className="text-lg leading-relaxed text-gray-700">
               Unicorn App is an interactive 3D web application where users can
-              create and watch animated unicorns bounce around in a physics-based
-              environment. Each unicorn is uniquely generated with randomized
-              features including colors, accessories, and hair styles. The app
-              combines modern web technologies with 3D graphics to create a
-              magical and engaging user experience.
+              create and watch animated unicorns bounce around in a
+              physics-based environment. Each unicorn is uniquely generated with
+              randomized features including colors, accessories, and hair
+              styles. The app combines modern web technologies with 3D graphics
+              to create a magical and engaging user experience.
             </p>
           </div>
 
@@ -83,8 +83,8 @@ export default function AboutPage() {
                 <div>
                   <h3 className="font-semibold text-gray-900">3D Unicorns</h3>
                   <p className="text-gray-600">
-                    Create 3D unicorns with randomized features including colors,
-                    accessories, and hair styles
+                    Create 3D unicorns with randomized features including
+                    colors, accessories, and hair styles
                   </p>
                 </div>
               </li>
@@ -143,7 +143,7 @@ export default function AboutPage() {
               Tech Stack
             </h2>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <div className="rounded-lg bg-gradient-to-r from-pink-500 to-purple-500 p-4">
+              <div className="rounded-lg bg-linear-to-r from-pink-500 to-purple-500 p-4">
                 <h3 className="mb-2 font-semibold text-white">Frontend</h3>
                 <ul className="space-y-1 text-sm text-white/90">
                   <li>• Next.js 15+ (App Router)</li>
@@ -154,15 +154,17 @@ export default function AboutPage() {
                   <li>• React Three Drei</li>
                 </ul>
               </div>
-              <div className="rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 p-4">
-                <h3 className="mb-2 font-semibold text-white">Backend & Database</h3>
+              <div className="rounded-lg bg-linear-to-r from-purple-500 to-blue-500 p-4">
+                <h3 className="mb-2 font-semibold text-white">
+                  Backend & Database
+                </h3>
                 <ul className="space-y-1 text-sm text-white/90">
                   <li>• Neon (Serverless Postgres)</li>
                   <li>• Drizzle ORM</li>
                   <li>• Next.js Server Actions</li>
                 </ul>
               </div>
-              <div className="rounded-lg bg-gradient-to-r from-blue-500 to-pink-500 p-4">
+              <div className="rounded-lg bg-linear-to-r from-blue-500 to-pink-500 p-4">
                 <h3 className="mb-2 font-semibold text-white">3D & Physics</h3>
                 <ul className="space-y-1 text-sm text-white/90">
                   <li>• React Three Fiber</li>
@@ -170,7 +172,7 @@ export default function AboutPage() {
                   <li>• Three.js</li>
                 </ul>
               </div>
-              <div className="rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 p-4">
+              <div className="rounded-lg bg-linear-to-r from-purple-500 to-pink-500 p-4">
                 <h3 className="mb-2 font-semibold text-white">Services</h3>
                 <ul className="space-y-1 text-sm text-white/90">
                   <li>• Clerk (Authentication)</li>
@@ -181,7 +183,7 @@ export default function AboutPage() {
           </div>
 
           {/* Call to Action */}
-          <div className="rounded-lg bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 p-8 text-center shadow-lg">
+          <div className="rounded-lg bg-linear-to-r from-pink-500 via-purple-500 to-blue-500 p-8 text-center shadow-lg">
             <h2 className="mb-4 text-3xl font-bold text-white">
               Ready to Create Your Unicorn?
             </h2>
@@ -208,4 +210,3 @@ export default function AboutPage() {
     </div>
   );
 }
-
