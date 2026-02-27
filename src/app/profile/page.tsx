@@ -42,7 +42,7 @@ function ProfilePageContent() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-100">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="text-lg text-gray-700">Loading...</div>
       </div>
     );
@@ -57,7 +57,7 @@ function ProfilePageContent() {
     : "Unknown";
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen">
       <nav className="bg-white shadow">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">

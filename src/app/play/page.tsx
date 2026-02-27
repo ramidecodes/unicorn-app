@@ -129,14 +129,14 @@ function PlayPageContent() {
   // Show loading while fetching creatures
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-200">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="text-lg text-gray-700">Loading creatures...</div>
       </div>
     );
   }
 
   return (
-    <div className="relative min-h-screen bg-gray-200">
+    <div className="relative min-h-screen">
       {/* Navigation */}
       <nav className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between p-4">
         <h1 className="text-xl font-bold text-gray-800">Unicorn App</h1>
